@@ -15,11 +15,12 @@ run_fastapi: venv/bin/activate
 
 # Run development server for Streamlit
 run_streamlit_dev:
-	streamlit run ./src/app.py
+	streamlit run ./app.py
+	
 
 # Run production server for Streamlit
 run_streamlit: venv/bin/activate
-	./venv/bin/streamlit run ./src/app.py
+	./venv/bin/streamlit run ./app.py
 
 requirements:
 	pipreqs . $(IGNORE_DIRS) $(SCAN_NOTEBOOKS)
