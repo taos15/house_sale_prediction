@@ -1,5 +1,3 @@
-# import sys
-# import os
+import os, sys
 
-# # Add the root directory to the sys.path
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
