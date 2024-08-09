@@ -242,7 +242,6 @@ def generate_sliders(
     # }
     # st.json(updated_dict)
 
-    print(f"------This is result holder: {pd.DataFrame(result)}------\n\n")
     print(
         f"------This is the prediction: {predict_observation(pd.DataFrame(result))}-----"
     )

@@ -7,7 +7,7 @@ SCAN_NOTEBOOKS := --scan-notebooks
 
 # Run development server for FastAPI
 run_fastapi_dev:
-	fastapi dev ./src/api.py
+	./venv/bin/fastapi dev ./src/api.py
 
 # Run production server for FastAPI
 run_fastapi: venv/bin/activate
@@ -15,7 +15,7 @@ run_fastapi: venv/bin/activate
 
 # Run development server for Streamlit
 run_streamlit_dev:
-	streamlit run ./app.py
+	./venv/bin/streamlit run ./app.py
 	
 
 # Run production server for Streamlit
@@ -26,12 +26,13 @@ requirements:
 	pipreqs . $(IGNORE_DIRS) $(SCAN_NOTEBOOKS)
 
 setup: requirements.txt
-	pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+	./venv/bin/pip3.11 install --no-cache-dir --upgrade pip && \
+    ./venv/bin/pip3.11 install --no-cache-dir -r requirements.txt
 
 venv/bin/activate: requirements.txt
-	python3 -m venv venv
-	./venv/bin/pip install --no-cache-dir -r requirements.txt
+	./venv/bin/python3.11 -m venv venv
+	./venv/bin/pip3.11 install --no-cache-dir -r requirements.txt
+
 
 clean:
 	rm -rf ./src/__pycache__
