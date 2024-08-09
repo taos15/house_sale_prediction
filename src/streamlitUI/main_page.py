@@ -132,12 +132,24 @@ def homepage():
         initial_sidebar_state="expanded",
     )
 
-    st.subheader(
-        f"Current prediction: ${np.round(predict_observation(pd.DataFrame(result_holder)),2):,.2f}"
+    tab1, tab2, tab3 = st.tabs(["Predict", "Graph", "About"])
+
+    col1, col2 = st.columns([1, 3])
+
+    with tab1:
+        st.subheader(
+            f"Current prediction: ${np.round(predict_observation(pd.DataFrame(result_holder)),2):,.2f}"
+        )
+
+        # with col1:
+        #     main_col = col1.container(height=1000) # it messes the expander
+
+        st.title("Modify the inputs to get a prediction")
+    generate_sliders(
+        observation=data,
+        main_features=main_features_list,
+        render_zone=tab1,  # it messes the expander
     )
-    col1, col2 = st.columns([3, 1])
-    col1.title("Test Observation Input Form")
-    generate_sliders(observation=data, main_features=main_features_list)
 
 
 def generate_sliders(
@@ -146,9 +158,24 @@ def generate_sliders(
     result: dict = result_holder,
     main_features: list = [],
 ):
-    primary_features_area = render_zone.container()
+    # create main area
+    with render_zone:
+        rend_container = st.container(height=500)
 
-    def render_categorical_area(obj_key: str, opt: dict, container=render_zone):
+    # creates a container to display the most import features on top
+    primary_features_area = rend_container.container()
+    footage_features = (
+        primary_features_area.container()
+    )  # create a container to group the footage features
+    year_features = (
+        primary_features_area.container()
+    )  # create a container to group the footage features
+
+    # creates a container inside an expander to hide the extra features
+    with rend_container.expander("Advance Options"):
+        advance_area = st.container()
+
+    def render_categorical_area(obj_key: str, opt: dict, container=rend_container):
         # Display the selectbox with the values (descriptions)
         selected_value = container.selectbox(
             # selected_value = st.selectbox(
@@ -161,10 +188,10 @@ def generate_sliders(
         # Store the key corresponding to the selected value
         result[obj_key] = [opt[selected_value]]
 
-    def render_numerical_area(obj_key: str, container=render_zone):
+    def render_numerical_area(obj_key: str, container=rend_container):
         if obj_key == "PropertyAge":
             age_value = result["YrSold"][0] - result["YearBuilt"][0]
-            container.text(f"PropertyAge: {age_value if age_value > 0 else 0}")
+            year_features.text(f"PropertyAge: {age_value if age_value > 0 else 0}")
             result[obj_key] = [age_value]
         else:
             result[obj_key] = [
@@ -181,6 +208,7 @@ def generate_sliders(
 
     for key in observation.keys():
 
+        # create the categorical selects
         if "options" in observation[key].keys():
             # Create a mapping of values to keys
             options_map = {
@@ -189,17 +217,24 @@ def generate_sliders(
             }
 
             if (key) in main_features:
+
                 render_categorical_area(key, options_map, primary_features_area)
             else:
-                render_categorical_area(key, options_map)
+                render_categorical_area(key, options_map, advance_area)
 
+        # create the numerical selects
         elif "minValue" in observation[key].keys():
             if (key) in main_features:
-                render_numerical_area(key, primary_features_area)
+                # group the footages features
+                if key in ["LotArea", "GrLivArea", "TotalBsmtSF"]:
+                    render_numerical_area(key, footage_features)
+                    # group the year features
+                elif key in ["YearBuilt", "YrSold"]:
+                    render_numerical_area(key, year_features)
+                else:
+                    render_numerical_area(key, primary_features_area)
             else:
-                render_numerical_area(
-                    key,
-                )
+                render_numerical_area(key, advance_area)
 
     # st.write("### Updated Test Observation Dictionary")
     # updated_dict = {
