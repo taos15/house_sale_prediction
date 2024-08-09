@@ -8,7 +8,7 @@ import pandas as pd
 
 from src.ml_model.predict_ovservation import predict_observation
 from src.ml_model.preserve_model import load_model
-from src.types.data_fields import data
+from src.types_utils.data_fields import data
 
 # from ml_model.preserve_model import load_model
 # from ..ml_model.preserve_model import load_model
@@ -102,7 +102,25 @@ testObservation = {
 artifacts = load_model("models/artifacts.joblib")
 
 # place holder to the current value of the files
-result_holder = {}
+result_holder: dict = testObservation.copy()
+
+main_features_list = [
+    "LotArea",
+    # "OverallQual",
+    # "OverallCond",
+    "YearBuilt",
+    "YrSold",
+    # "MasVnrArea",
+    "TotalBsmtSF",
+    "Heating",
+    "CentralAir",
+    "GrLivArea",
+    "BedroomAbvGr",
+    "FullBath",
+    "HalfBath",
+    "GarageCars",
+    "PropertyAge",
+]
 
 
 def homepage():
@@ -114,37 +132,74 @@ def homepage():
         initial_sidebar_state="expanded",
     )
 
-    st.title("Test Observation Input Form")
-    generate_sliders(observation=data)
+    st.subheader(
+        f"Current prediction: ${np.round(predict_observation(pd.DataFrame(result_holder)),2):,.2f}"
+    )
+    col1, col2 = st.columns([3, 1])
+    col1.title("Test Observation Input Form")
+    generate_sliders(observation=data, main_features=main_features_list)
 
 
-def generate_sliders(observation: dict, result: dict = result_holder):
+def generate_sliders(
+    observation: dict,
+    render_zone: st._DeltaGenerator = st,  # type: ignore
+    result: dict = result_holder,
+    main_features: list = [],
+):
+    primary_features_area = render_zone.container()
 
-    for key, value in observation.items():
+    def render_categorical_area(obj_key: str, opt: dict, container=render_zone):
+        # Display the selectbox with the values (descriptions)
+        selected_value = container.selectbox(
+            # selected_value = st.selectbox(
+            f"{observation[obj_key]['name']}",
+            help=f"{observation[obj_key]['description']}",
+            options=list(opt.keys()),  # display the values
+            index=0,
+        )
 
-        if "options" in observation[key].keys():
-            # Add more strings as options for the dropdown here
-            result[key] = [
-                st.selectbox(
-                    f"{observation[key]['name']}",
-                    options=[
-                        list(obj.values())[0]
-                        for obj in observation[key][
-                            "options"
-                        ]  # get the description of options
-                    ],
-                    index=0,
-                    # f"{key}", options=artifacts["categorial_options"][key], index=0
+        # Store the key corresponding to the selected value
+        result[obj_key] = [opt[selected_value]]
+
+    def render_numerical_area(obj_key: str, container=render_zone):
+        if obj_key == "PropertyAge":
+            age_value = result["YrSold"][0] - result["YearBuilt"][0]
+            container.text(f"PropertyAge: {age_value if age_value > 0 else 0}")
+            result[obj_key] = [age_value]
+        else:
+            result[obj_key] = [
+                container.slider(
+                    # st.slider(
+                    f"{obj_key}",
+                    help=f"{observation[obj_key]['description']}",
+                    min_value=observation[obj_key]["minValue"],
+                    max_value=observation[obj_key]["maxValue"],
+                    value=np.round(observation[obj_key]["defaultValue"]),
+                    step=1.0,
                 )
             ]
+
+    for key in observation.keys():
+
+        if "options" in observation[key].keys():
+            # Create a mapping of values to keys
+            options_map = {
+                list(obj.values())[0]: list(obj.keys())[0]
+                for obj in observation[key]["options"]
+            }
+
+            if (key) in main_features:
+                render_categorical_area(key, options_map, primary_features_area)
+            else:
+                render_categorical_area(key, options_map)
+
         elif "minValue" in observation[key].keys():
-            result[key] = st.slider(
-                f"{key}",
-                min_value=observation[key]["minValue"],
-                max_value=observation[key]["minValue"] + 10,  # until I add max value
-                # max_value=observation[key]["maxValue"],
-                value=observation[key]["value"],
-            )
+            if (key) in main_features:
+                render_numerical_area(key, primary_features_area)
+            else:
+                render_numerical_area(
+                    key,
+                )
 
     # st.write("### Updated Test Observation Dictionary")
     # updated_dict = {

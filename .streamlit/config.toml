@@ -1,6 +1,25 @@
 [client]
 showErrorDetails = false
 
+# [theme]
+# primaryColor = "#F63366"
+# backgroundColor = "black"
+
+
+
 [theme]
-primaryColor = "#F63366"
-backgroundColor = "black"
+base="dark"
+primaryColor="#BB86FC"         # A nice purple color for interactive elements
+backgroundColor="#000000"      # Pure black background
+secondaryBackgroundColor="#121212"  # A slightly lighter black for secondary elements
+textColor="#E0E0E0"            # Light gray text for readability
+font="sans serif"              # Font type
+
+
+# [theme]
+# base="dark"
+# primaryColor="#BB86FC"         # Soft purple for interactive elements
+# backgroundColor="#000000"      # Pure black background
+# secondaryBackgroundColor="#121212"  # Slightly lighter black for secondary elements
+# textColor="#B0B0B0"            # Softer light gray text
+# font="sans serif"              # Font type
