@@ -37,8 +37,8 @@ Implement an API server.
 The to runt he application run:
 
 ```sh
-make setup
-make run_streamlit
+make setup # to install the application
+make run # to runt the application
 
 ```
 

@@ -1,6 +1,7 @@
 """This is the home page of the streamlit app"""
 
 import streamlit as st
+from streamlit.delta_generator import DeltaGenerator
 import numpy as np
 import pandas as pd
 
@@ -156,7 +157,7 @@ def homepage():
 
 def generate_sliders(
     observation: dict,
-    render_zone: st._DeltaGenerator = st,  # type: ignore
+    render_zone: DeltaGenerator = st,  # type: ignore
     result: dict = result_holder,
     main_features: list = [],
 ):
