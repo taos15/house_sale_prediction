@@ -36,7 +36,7 @@ The model can be tested [here](https://houseprediction-eda.streamlit.app/)
 
 ### Source code
 
-The to runt he application run:
+To run the application from source code:
 
 ```sh
 make setup # to install the application
