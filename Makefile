@@ -15,7 +15,7 @@ run_fastapi: venv/bin/activate
 
 # Run development server for Streamlit
 run_streamlit_dev:
-	./venv/bin/streamlit run ./app.py
+	streamlit run ./app.py
 	
 
 # Run production server for Streamlit

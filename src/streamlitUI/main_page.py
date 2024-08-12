@@ -1,7 +1,5 @@
 """This is the home page of the streamlit app"""
 
-from pandas import isna
-from pydantic import InstanceOf
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -150,6 +148,10 @@ def homepage():
         main_features=main_features_list,
         render_zone=tab1,  # it messes the expander
     )
+    with tab2:
+        st.title("Coming soon...")
+    with tab3:
+        st.title("Coming soon...")
 
 
 def generate_sliders(
@@ -160,7 +162,7 @@ def generate_sliders(
 ):
     # create main area
     with render_zone:
-        rend_container = st.container(height=500)
+        rend_container = st.container(height=800)
 
     # creates a container to display the most import features on top
     primary_features_area = rend_container.container()

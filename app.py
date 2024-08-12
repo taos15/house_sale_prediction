@@ -1,10 +1,5 @@
 """This is the streamlit entry point"""
 
-import sys
-import os
-
-
-import streamlit as st
 from src.streamlitUI.main_page import homepage
 
 
