@@ -1,0 +1,16 @@
+services:
+  house_price_prediction: # container name
+    # image: ${IMAGE:?err} # if pulling the image
+    build: # use the build instead of image when builing from source code
+      context: .
+      dockerfile: Dockerfile
+    container_name: house_price_prediction
+    env_file:
+      - ./.env
+    # volumes: # uncomment if you want to mount the app's directory
+    #   - ./data:${CONTAINER_DIR} # set the container's app folder int the .env
+    ports:
+      - 8510:8510 # set ports
+    restart: unless-stopped
+    security_opt:
+      - apparmor:unconfined

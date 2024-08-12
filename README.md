@@ -29,3 +29,25 @@ Implement an API server.
 
 - Implement a fastAPI server
 - Add endpoints to get a prediction
+
+## Run the application
+
+### Source code
+
+The to runt he application run:
+
+```sh
+make setup
+make run_streamlit
+
+```
+
+### Docker
+
+To run the application in a docker container, use the provided docker compose file, and run:
+
+```sh
+Docker compose up -d # use -d flag to run detached form the current terminal.
+```
+
+By the default the application will be running on port 5010.
