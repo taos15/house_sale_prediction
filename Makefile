@@ -1,38 +1,33 @@
 # Variables
 IGNORE_DIRS := --ignore ./.venv
 SCAN_NOTEBOOKS := --scan-notebooks
+NUMPY_VERSION := numpy>=1.23,<2.0
 
 # Commands
-.PHONY: requirements install run run_dev run_fastapi run_streamlit setup clean
+.PHONY: requirements install run  setup clean
 
-# Run development server for FastAPI
-run_fastapi_dev:
-	./venv/bin/fastapi dev ./src/api.py
-
-# Run production server for FastAPI
-run_fastapi: venv/bin/activate
-	./venv/bin/fastapi ./src/api.py
-
-# Run development server for Streamlit
-run_streamlit_dev:
-	streamlit run ./app.py
-	
-
-# Run production server for Streamlit
-run_streamlit: venv/bin/activate
+# Run server for Streamlit
+run: 
 	streamlit run ./app.py --server.port=8501 --server.address=0.0.0.0
 
+# Creates the requirements.txt if it does not exist, it uses `@` to suppress the stdo.
+# it uses sed to overwrite the numpy version, and get a losen version.	
 requirements:
-	pipreqs . $(IGNORE_DIRS) $(SCAN_NOTEBOOKS)
+	@if [ ! -f requirements.txt ]; then \
+		echo "Generating requirements.txt..."; \
+		pipreqs . $(IGNORE_DIRS) $(SCAN_NOTEBOOKS); \
+		if grep -q "^numpy" requirements.txt; then \
+			sed -i '' "s/^numpy.*/$(NUMPY_VERSION)/" requirements.txt; \
+		else \
+			echo "$(NUMPY_VERSION)" >> requirements.txt; \
+		fi \
+	else \
+		echo "requirements.txt already exists. Skipping generation."; \
+	fi
 
-setup: requirements.txt
-	./venv/bin/pip3.11 install --no-cache-dir --upgrade pip && \
-    ./venv/bin/pip3.11 install --no-cache-dir -r requirements.txt
-
-venv/bin/activate: requirements.txt
-	./venv/bin/python3.11 -m venv venv
-	./venv/bin/pip3.11 install --no-cache-dir -r requirements.txt
-
+setup: requirements
+	pip3.11 install --no-cache-dir --upgrade pip && \
+    pip3.11 install --no-cache-dir -r requirements.txt
 
 clean:
 	rm -rf ./src/__pycache__
