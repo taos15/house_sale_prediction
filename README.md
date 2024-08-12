@@ -32,6 +32,8 @@ Implement an API server.
 
 ## Run the application
 
+The model can be tested [here](https://houseprediction-eda.streamlit.app/)
+
 ### Source code
 
 The to runt he application run:
